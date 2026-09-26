@@ -174,7 +174,9 @@
     // Scale all measurements from the 60 x 40 mm reference design.
     var k = Math.min(W / 480, H / 320);
     var pad = Math.round(12 * k);
-    var stripW = Math.round(W * 0.25);
+    // The side strip is cut off along the divider and kept with the physical
+    // voucher, so it carries its own barcode and details.
+    var stripW = Math.round(W * 0.30);
     var ruleW = Math.max(3, Math.round(4 * k));
     var ruleX = W - stripW;
     var mainRight = ruleX - Math.round(10 * k);
@@ -240,13 +242,14 @@
     ctx.fillRect(ruleX, Math.round(4 * k), ruleW, H - Math.round(8 * k));
 
     // --- Side strip, rotated 90 degrees (reads bottom to top) --------------
-    var stripInner = stripW - ruleW - Math.round(8 * k); // usable across the strip
+    var cutGap = Math.round(10 * k);                     // clearance for an imprecise cut
+    var stripInner = stripW - ruleW - cutGap - Math.round(6 * k); // usable across the strip
     var along = H - 2 * pad;                             // usable along the strip
     ctx.save();
-    ctx.translate(ruleX + ruleW + Math.round(4 * k), H - pad);
+    ctx.translate(ruleX + ruleW + cutGap, H - pad);
     ctx.rotate(-Math.PI / 2);
-    // Barcode of the iNat number next to the divider, then text rows.
-    var barH = Math.round(stripInner * 0.34);
+    // Barcode of the iNat number nearest the cut line, then text rows.
+    var barH = Math.round(stripInner * 0.3);
     drawCode128(ctx, String(obs.id), 0, 0, along, barH);
     var rows = [
       { text: String(obs.id), bold: true, weight: 1.15 },

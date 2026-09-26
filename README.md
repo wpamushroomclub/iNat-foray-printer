@@ -20,8 +20,11 @@ There is no install and no build step. It is plain HTML and JavaScript.
 └───────────────────────────────────────┴─────┘
 ```
 
-* The side strip also has a **Code 128 barcode of just the iNat number**, with
-  the bars running across the strip, placed next to the divider line.
+* **The side strip is cut off along the divider line and kept with the
+  physical voucher.** It stands alone: a Code 128 barcode of just the iNat
+  number, then the number, username, date and time, and species. The barcode
+  sits about 1.25 mm from the line, so a slightly off cut does not clip it.
+  The strip is 30% of the label width, 18 mm on a 60 mm label.
 * Scientific names at genus rank and below are printed in italics.
 * The date and time are the observation's local time.
 * The location is iNaturalist's place name (`place_guess`), wrapped and sized
