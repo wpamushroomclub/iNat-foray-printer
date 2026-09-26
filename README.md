@@ -11,15 +11,17 @@ There is no install and no build step. It is plain HTML and JavaScript.
 ```
  paper output direction ▲
 ┌───────────────────────────────────────┬─────┐
-│ ▄▄▄▄▄▄▄  iNat #                       │  2  │
-│ █ QR  █  293293734                    │  9  │   QR code = "<iNat #><TAB><username>"
-│ █     █  lostculture                  │  3  │
-│ ▀▀▀▀▀▀▀  2026-09-09 09:42             │  …  │   Side strip (rotated 90°):
-│ Hydnellum scrobiculatum               │     │     iNat #, username,
-│ Epping Forest, Loughton, UK           │     │     date + time, species
+│ ▄▄▄▄▄▄▄  iNat #                       │ ▌ 2 │
+│ █ QR  █  293293734                    │ ▌ 9 │   QR code = "<iNat #><TAB><username>"
+│ █     █  lostculture                  │ ▌ 3 │
+│ ▀▀▀▀▀▀▀  2026-09-09 09:42             │ ▌ … │   Side strip (rotated 90°):
+│ Hydnellum scrobiculatum               │ ▌   │     Code 128 barcode of the iNat #,
+│ Epping Forest, Loughton, UK           │ ▌   │     then iNat #, username, date + time, species
 └───────────────────────────────────────┴─────┘
 ```
 
+* The side strip also has a **Code 128 barcode of just the iNat number**, with
+  the bars running across the strip, placed next to the divider line.
 * Scientific names at genus rank and below are printed in italics.
 * The date and time are the observation's local time.
 * The location is iNaturalist's place name (`place_guess`), wrapped and sized
@@ -81,7 +83,7 @@ Settings are saved in the browser.
 |---|---|
 | `index.html`, `css/app.css` | Page and styles |
 | `js/inat.js` | iNaturalist API search, with paging and time-zone handling |
-| `js/label.js` | Draws a label onto a 1-bit canvas at 203 dpi |
+| `js/label.js` | Draws a label (QR code, Code 128 barcode, text) onto a 1-bit canvas at 203 dpi |
 | `js/phomemo.js` | M110/M120/M220 printer protocol, plus the Web Serial and Web Bluetooth connections |
 | `js/app.js` | Selection, preview, printing and CSV export |
 | `vendor/qrcode.js` | [qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator) 1.4.4 (MIT) |

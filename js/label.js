@@ -69,6 +69,54 @@
     return { px: wrapPx, lines: wrap(ctx, text, maxWidth, maxLines) };
   }
 
+  // Code 128 bar/space widths for symbol values 0..106 (106 = stop).
+  var C128 = ('212222 222122 222221 121223 121322 131222 122213 122312 132212 221213 ' +
+    '221312 231212 112232 122132 122231 113222 123122 123221 223211 221132 ' +
+    '221231 213212 223112 312131 311222 321122 321221 312212 322112 322211 ' +
+    '212123 212321 232121 111323 131123 131321 112313 132113 132311 211313 ' +
+    '231113 231311 112133 112331 132131 113123 113321 133121 313121 211331 ' +
+    '231131 213113 213311 213131 311123 311321 331121 312113 312311 332111 ' +
+    '314111 221411 431111 111224 111422 121124 121421 141122 141221 112214 ' +
+    '112412 122114 122411 142112 142211 241211 221114 413111 241112 134111 ' +
+    '111242 121142 121241 114212 124112 124211 411212 421112 421211 212141 ' +
+    '214121 412121 111143 111341 131141 114113 114311 411113 411311 113141 ' +
+    '114131 311141 411131 211412 211214 211232 2331112').split(' ');
+
+  // Encodes a digit string as Code 128 symbol values: code set C (digit
+  // pairs), switching to code set B for a trailing odd digit.
+  function code128Digits(digits) {
+    var values = [105]; // Start C
+    var i = 0;
+    for (; i + 1 < digits.length; i += 2) values.push(parseInt(digits.substr(i, 2), 10));
+    if (i < digits.length) {
+      values.push(100); // Code B
+      values.push(digits.charCodeAt(i) - 32);
+    }
+    var sum = values[0];
+    for (var j = 1; j < values.length; j++) sum += j * values[j];
+    values.push(sum % 103, 106);
+    return values;
+  }
+
+  // Draws a Code 128 barcode with bars running across the current y axis.
+  // Returns the drawn length (excluding quiet zones) or 0 if it cannot fit.
+  function drawCode128(ctx, digits, x, y, maxLen, height) {
+    var widths = code128Digits(digits).map(function (v) { return C128[v]; }).join('');
+    var modules = 0;
+    for (var i = 0; i < widths.length; i++) modules += +widths[i];
+    var quiet = 10; // modules of white either side, required by scanners
+    var m = Math.min(3, Math.floor(maxLen / (modules + 2 * quiet)));
+    if (m < 1) return 0;
+    var len = modules * m;
+    var cx = x + Math.floor((maxLen - len) / 2);
+    for (var b = 0; b < widths.length; b++) {
+      var w = +widths[b] * m;
+      if (b % 2 === 0) ctx.fillRect(cx, y, w, height);
+      cx += w;
+    }
+    return len;
+  }
+
   function drawQr(ctx, payload, x, y, maxSize) {
     var qr = global.qrcode(0, 'M');
     qr.addData(payload, 'Byte');
@@ -126,7 +174,7 @@
     // Scale all measurements from the 60 x 40 mm reference design.
     var k = Math.min(W / 480, H / 320);
     var pad = Math.round(12 * k);
-    var stripW = Math.round(W * 0.21);
+    var stripW = Math.round(W * 0.25);
     var ruleW = Math.max(3, Math.round(4 * k));
     var ruleX = W - stripW;
     var mainRight = ruleX - Math.round(10 * k);
@@ -197,15 +245,18 @@
     ctx.save();
     ctx.translate(ruleX + ruleW + Math.round(4 * k), H - pad);
     ctx.rotate(-Math.PI / 2);
+    // Barcode of the iNat number next to the divider, then text rows.
+    var barH = Math.round(stripInner * 0.34);
+    drawCode128(ctx, String(obs.id), 0, 0, along, barH);
     var rows = [
-      { text: String(obs.id), bold: true, weight: 1.25 },
+      { text: String(obs.id), bold: true, weight: 1.15 },
       { text: obs.username, weight: 1 },
       { text: dt, weight: 1 },
       { text: species, italic: italic, weight: 1 }
     ];
     var totalWeight = rows.reduce(function (s, r) { return s + r.weight; }, 0);
-    var unit = stripInner / (totalWeight * 1.12);
-    var sy = 0;
+    var sy = barH + Math.round(2 * k);
+    var unit = (stripInner - sy) / (totalWeight * 1.12);
     rows.forEach(function (row) {
       var opts2 = { bold: row.bold, italic: row.italic };
       var px = fitSize(ctx, row.text, along, Math.floor(unit * row.weight), Math.round(11 * k), opts2);
