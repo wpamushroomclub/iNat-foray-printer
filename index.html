@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>iNat Foray Printer</title>
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<header class="bar">
+  <h1>iNat Foray Printer</h1>
+  <span class="sub">Phomemo M220 specimen labels</span>
+</header>
+
+<main>
+  <section class="card" aria-labelledby="find-h">
+    <h2 id="find-h">1. Find observations</h2>
+    <form id="find-form" class="find">
+      <label>iNat username
+        <input id="username" name="username" required autocomplete="username" spellcheck="false" placeholder="e.g. lostculture">
+      </label>
+      <label>Date
+        <input id="date" name="date" type="date" required>
+      </label>
+      <label>Match date by
+        <select id="date-field">
+          <option value="observed">Date observed</option>
+          <option value="created">Date uploaded</option>
+        </select>
+      </label>
+      <button type="submit" class="primary" id="find-btn">Find</button>
+    </form>
+    <p id="status" class="status" role="status" aria-live="polite"></p>
+  </section>
+
+  <div class="layout">
+    <section class="card list-card" aria-labelledby="list-h">
+      <div class="list-head">
+        <h2 id="list-h">2. Choose labels</h2>
+        <div class="list-tools">
+          <button type="button" id="select-all" disabled>Select all</button>
+          <button type="button" id="select-none" disabled>Deselect all</button>
+          <span id="count" class="count">0 selected</span>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table id="obs-table">
+          <thead>
+            <tr>
+              <th class="c-check"><span class="sr">Print</span></th>
+              <th class="c-photo"><span class="sr">Photo</span></th>
+              <th>iNat #</th>
+              <th>Time</th>
+              <th>Species</th>
+              <th class="c-place">Location</th>
+            </tr>
+          </thead>
+          <tbody id="obs-body">
+            <tr class="empty"><td colspan="6">Enter a username and date, then choose Find.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card side" aria-labelledby="print-h">
+      <h2 id="print-h">3. Print</h2>
+      <figure class="preview">
+        <canvas id="preview" width="480" height="320" aria-label="Label preview"></canvas>
+        <figcaption id="preview-cap">Preview: select a row</figcaption>
+      </figure>
+
+      <div class="actions">
+        <button type="button" class="primary" id="print-driver" disabled>Print via Windows printer</button>
+        <button type="button" id="print-serial" disabled>Print direct: USB / COM port</button>
+        <button type="button" id="print-ble" disabled>Print direct: Bluetooth</button>
+        <div class="row">
+          <button type="button" id="export-csv" disabled>Export CSV</button>
+          <button type="button" id="download-png" disabled>Download preview PNG</button>
+        </div>
+        <p id="conn" class="status small"></p>
+      </div>
+
+      <details class="settings">
+        <summary>Label &amp; printer settings</summary>
+        <div class="grid">
+          <label>Label width (mm)<input id="s-width" type="number" min="20" max="75" step="1"></label>
+          <label>Label height (mm)<input id="s-height" type="number" min="15" max="100" step="1"></label>
+          <label>Density (1–15)<input id="s-density" type="number" min="1" max="15" step="1"></label>
+          <label>Speed (1–5)<input id="s-speed" type="number" min="1" max="5" step="1"></label>
+          <label>Media
+            <select id="s-media">
+              <option value="gaps">Labels with gaps</option>
+              <option value="continuous">Continuous</option>
+              <option value="marks">Labels with black marks</option>
+            </select>
+          </label>
+          <label>Left offset (dots)<input id="s-offset" type="number" min="0" max="200" step="1"></label>
+          <label class="check"><input id="s-rotate" type="checkbox"> Rotate 180°</label>
+        </div>
+        <p class="small">Density, speed, media and offset apply to direct printing only. 8 dots = 1 mm.</p>
+      </details>
+    </section>
+  </div>
+</main>
+
+<footer class="foot small">
+  Data from the <a href="https://api.inaturalist.org/v1/docs/" rel="noopener">iNaturalist API</a>.
+  <a href="?demo=1">Demo data</a> for testing without a network.
+</footer>
+
+<script src="vendor/qrcode.js"></script>
+<script src="js/label.js"></script>
+<script src="js/phomemo.js"></script>
+<script src="js/inat.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
