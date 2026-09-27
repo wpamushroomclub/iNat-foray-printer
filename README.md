@@ -23,7 +23,8 @@ There is no install and no build step. It is plain HTML and JavaScript.
 ## Label layout
 
 This is the demo label exactly as the page draws it (480 × 320 dots, shown at
-2×, with no rotation; the paper output direction is up). The observer is a demo
+2×, with the default 1.5 mm shift left and no rotation; the paper output
+direction is up). The observer is a demo
 account and the iNat number is made up.
 
 ![Example 60 × 40 mm label: QR code, iNat number 279870013, username foray_demo, name Morgan Fielding, date and time, species and location, with a cut-off side strip](docs/label-example.png)
@@ -103,6 +104,11 @@ Open **Label & printer settings** to adjust:
 * **Media:** labels with gaps (default), continuous roll, or black-mark labels.
 * **Left offset:** shifts the image right if the print sits too far left on
   the label.
+* **Shift left** (mm, default 1.5): moves the whole label towards the QR
+  code, for every printing method. The printer does not reach the far edge
+  of the side strip, so without it the strip's last line (the species) can
+  be cut off. Raise it if that line is still clipped; lower it if the QR code
+  is. The preview shows the result.
 * **Rotation:** turns the printed image to match how the label feeds.
   The default is 90° clockwise, which prints correctly on the M220 through
   the Windows driver in Chrome; the other options are none,

@@ -125,8 +125,9 @@
   /**
    * Renders a label for one observation.
    * obs:  {id, username, date, time, species, rank, place}
-   * opts: {widthMm, heightMm, rotation, qrUsernameFirst}
-   *       (rotation: degrees counter-clockwise)
+   * opts: {widthMm, heightMm, rotation, qrUsernameFirst, shiftMm}
+   *       (rotation: degrees counter-clockwise; shiftMm: moves everything
+   *       left, towards the QR code, before rotating)
    * Returns a canvas of widthMm*8 x heightMm*8 dots (swapped at 90/270).
    */
   function render(obs, opts) {
@@ -140,6 +141,9 @@
     ctx.fillRect(0, 0, W, H);
     ctx.fillStyle = '#000';
     ctx.textBaseline = 'alphabetic';
+    // Printers do not all place the image at the same spot across the label;
+    // shifting left keeps the side strip's last line on the label.
+    ctx.translate(-Math.round((+opts.shiftMm || 0) * DOTS_PER_MM), 0);
 
     // Scale all measurements from the 60 x 40 mm reference design.
     var k = Math.min(W / 480, H / 320);

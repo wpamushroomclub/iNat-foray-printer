@@ -6,6 +6,17 @@ All notable changes to this project are recorded here. The format follows
 
 ## [Unreleased]
 
+### Fixed
+
+- The side strip's last line (the species) could fall off the edge of the
+  label. The whole label now shifts 1.5 mm left, towards the QR code, for
+  every printing method.
+
+### Added
+
+- **Shift left (mm)** in Label & printer settings, to tune that shift for a
+  particular printer.
+
 ## [1.0.1] - 2026-09-27
 
 ### Fixed

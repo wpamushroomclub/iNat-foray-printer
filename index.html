@@ -109,6 +109,7 @@
             </select>
           </label>
           <label>Left offset (dots)<input id="s-offset" type="number" min="0" max="200" step="1"></label>
+          <label>Shift left (mm)<input id="s-shift" type="number" min="0" max="5" step="0.25"></label>
           <label>Rotation
             <select id="s-rotate">
               <option value="0">None</option>
@@ -119,7 +120,7 @@
           </label>
           <label class="check"><input id="s-qr-swap" type="checkbox"> QR code: username before iNat #</label>
         </div>
-        <p class="small">Density, speed, media and offset apply to direct printing only. 8 dots = 1 mm.</p>
+        <p class="small">Shift left moves the whole label towards the QR code, for every printing method; raise it if the side strip's last line is cut off. Density, speed, media and left offset apply to direct printing only. 8 dots = 1 mm.</p>
       </details>
     </section>
   </div>

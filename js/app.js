@@ -6,12 +6,12 @@
 
   var DEFAULTS = {
     widthMm: 60, heightMm: 40, density: 10, speed: 3, media: 'gaps', offsetDots: 0, rotation: '270',
-    qrUsernameFirst: false
+    shiftMm: 1.5, qrUsernameFirst: false
   };
   var SETTING_INPUTS = {
     widthMm: 's-width', heightMm: 's-height', density: 's-density', speed: 's-speed',
     media: 's-media', offsetDots: 's-offset', rotation: 's-rotate',
-    qrUsernameFirst: 's-qr-swap'
+    shiftMm: 's-shift', qrUsernameFirst: 's-qr-swap'
   };
 
   var state = {
