@@ -27,8 +27,9 @@ There is no install and no build step. It is plain HTML and JavaScript.
   species. The code sits about 1.25 mm from the line, so a slightly off cut
   does not clip it. It is a 2D code rather than a 1D barcode because 1D bars
   only 2 dots wide merge when printed; Data Matrix squares are 3 dots and
-  error-corrected. The strip is 22% of the label width, 13.2 mm on
-  a 60 mm label.
+  error-corrected. The strip is 24% of the label width, 14.4 mm on
+  a 60 mm label, and its text stays 2 mm clear of the label edge, which the
+  printer cannot reach.
 * The observer's real name from their iNat profile is printed under the
   username, when they have set one.
 * Scientific names at genus rank and below are printed in italics.
@@ -36,7 +37,9 @@ There is no install and no build step. It is plain HTML and JavaScript.
 * The location is iNaturalist's place name (`place_guess`), wrapped and sized
   to fit.
 * When scanned, the QR code types the number, a Tab, then the username. A
-  scanner used as a keyboard therefore fills two spreadsheet cells.
+  scanner used as a keyboard therefore fills two spreadsheet cells. Tick
+  **QR code: username before iNat #** in *Label & printer settings* to swap
+  the order; the CSV export's `qr_code` column follows the same setting.
   Zebra scanners (for example the DS9308) send Tab as Ctrl+I by default, so
   both land in one cell: scan **Enable Function Key Mapping** from the
   scanner's Product Reference Guide (USB Host Parameters) to fix this.

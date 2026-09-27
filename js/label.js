@@ -111,8 +111,11 @@
     ctx.putImageData(img, 0, 0);
   }
 
-  function qrPayload(obs) {
-    return obs.id + '\t' + obs.username;
+  // What the main QR code types when scanned: two fields separated by a Tab.
+  function qrPayload(obs, opts) {
+    return opts && opts.qrUsernameFirst
+      ? obs.username + '\t' + obs.id
+      : obs.id + '\t' + obs.username;
   }
 
   function dateTime(obs) {
@@ -122,7 +125,8 @@
   /**
    * Renders a label for one observation.
    * obs:  {id, username, date, time, species, rank, place}
-   * opts: {widthMm, heightMm, rotation}  (rotation: degrees counter-clockwise)
+   * opts: {widthMm, heightMm, rotation, qrUsernameFirst}
+   *       (rotation: degrees counter-clockwise)
    * Returns a canvas of widthMm*8 x heightMm*8 dots (swapped at 90/270).
    */
   function render(obs, opts) {
@@ -142,8 +146,8 @@
     var pad = Math.round(12 * k);
     // The side strip is cut off along the divider and kept with the physical
     // voucher, so it carries its own barcode and details: a barcode plus two
-    // text rows (about 20 dots each) at 22% of the label width.
-    var stripW = Math.round(W * 0.22);
+    // text rows (about 20 dots each) at 24% of the label width.
+    var stripW = Math.round(W * 0.24);
     var ruleW = Math.max(3, Math.round(4 * k));
     var ruleX = W - stripW;
     var mainRight = ruleX - Math.round(10 * k);
@@ -152,7 +156,7 @@
     var place = obs.place || '';
 
     // --- Main panel -------------------------------------------------------
-    var qrSize = drawQr(ctx, qrPayload(obs), pad, pad, Math.round(H * 0.42));
+    var qrSize = drawQr(ctx, qrPayload(obs, opts), pad, pad, Math.round(H * 0.42));
 
     var tx = pad + qrSize + Math.round(14 * k);
     var tw = mainRight - tx;
@@ -162,7 +166,7 @@
     y += Math.round(15 * k);
     ctx.fillText('iNat #', tx, y);
 
-    var idPx = fitSize(ctx, String(obs.id), tw, Math.round(46 * k), Math.round(16 * k), { bold: true });
+    var idPx = fitSize(ctx, String(obs.id), tw, Math.round(40 * k), Math.round(16 * k), { bold: true });
     ctx.font = font(idPx, { bold: true });
     y += Math.round(idPx * 0.95);
     ctx.fillText(String(obs.id), tx, y);
@@ -217,7 +221,7 @@
 
     // --- Side strip, rotated 90 degrees (reads bottom to top) --------------
     var cutGap = Math.round(10 * k);                     // clearance for an imprecise cut
-    var stripInner = stripW - ruleW - cutGap - Math.round(6 * k); // usable across the strip
+    var stripInner = stripW - ruleW - cutGap - Math.round(16 * k); // usable across; 2 mm clear of the edge, which the printer cannot reach
     var along = H - 2 * pad;                             // usable along the strip
     ctx.save();
     ctx.translate(ruleX + ruleW + cutGap, H - pad);

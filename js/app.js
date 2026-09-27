@@ -5,11 +5,13 @@
   var $ = function (id) { return document.getElementById(id); };
 
   var DEFAULTS = {
-    widthMm: 60, heightMm: 40, density: 10, speed: 3, media: 'gaps', offsetDots: 0, rotation: '270'
+    widthMm: 60, heightMm: 40, density: 10, speed: 3, media: 'gaps', offsetDots: 0, rotation: '270',
+    qrUsernameFirst: false
   };
   var SETTING_INPUTS = {
     widthMm: 's-width', heightMm: 's-height', density: 's-density', speed: 's-speed',
-    media: 's-media', offsetDots: 's-offset', rotation: 's-rotate'
+    media: 's-media', offsetDots: 's-offset', rotation: 's-rotate',
+    qrUsernameFirst: 's-qr-swap'
   };
 
   var state = {
@@ -319,7 +321,7 @@
     ];
     var lines = [cols.map(function (c) { return c[0]; }).concat('qr_code').join(',')];
     list.forEach(function (o) {
-      lines.push(cols.map(function (c) { return csvCell(o[c[1]]); }).concat(csvCell(LabelRenderer.qrPayload(o))).join(','));
+      lines.push(cols.map(function (c) { return csvCell(o[c[1]]); }).concat(csvCell(LabelRenderer.qrPayload(o, state.settings))).join(','));
     });
     // BOM so Excel opens it as UTF-8.
     download(new Blob(['﻿' + lines.join('\r\n') + '\r\n'], { type: 'text/csv;charset=utf-8' }),
