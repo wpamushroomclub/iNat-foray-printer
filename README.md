@@ -11,6 +11,13 @@ want, and prints a specimen label for each on a **Phomemo M220** (60 × 40 mm /
 
 There is no install and no build step. It is plain HTML and JavaScript.
 
+<h3 align="center">
+  ⬇️ <a href="https://github.com/wpamushroomclub/iNat-foray-printer/releases/latest">Download the latest release</a>
+</h3>
+<p align="center">
+  Download the <code>.zip</code> from the release, unzip it, and open <code>index.html</code> in Chrome or Edge.
+</p>
+
 ![The iNat Foray Printer page in demo mode](docs/screenshot.png)
 
 ## Label layout
