@@ -1,6 +1,6 @@
 {
   "name": "inat-foray-printer",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "private": true,
   "description": "Print Phomemo M220 specimen labels for a day's iNaturalist observations",
   "license": "MIT",
