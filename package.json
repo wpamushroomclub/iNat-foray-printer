@@ -1,0 +1,14 @@
+{
+  "name": "inat-foray-printer",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Print Phomemo M220 specimen labels for a day's iNaturalist observations",
+  "license": "MIT",
+  "author": "Western Pennsylvania Mushroom Club",
+  "repository": "github:wpamushroomclub/iNat-foray-printer",
+  "scripts": {
+    "version": "node scripts/version.mjs && git add index.html CHANGELOG.md",
+    "check-version": "node scripts/version.mjs --check",
+    "build": "node scripts/build.mjs"
+  }
+}

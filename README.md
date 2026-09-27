@@ -122,12 +122,49 @@ Settings are saved in the browser.
 | `js/phomemo.js` | M110/M120/M220 printer protocol, plus the Web Serial and Web Bluetooth connections |
 | `js/app.js` | Selection, preview, printing and CSV export |
 | `img/wpmc-mark.png`, `fonts/` | WPMC logo, and the club website's DM Sans and DM Serif Display fonts (SIL OFL 1.1) |
+| `CHANGELOG.md` | Release history |
+| `package.json`, `scripts/`, `.github/workflows/release.yml` | Versioning and release automation (see Releasing) |
 | `LICENSE`, `THIRD-PARTY-NOTICES.md` | MIT License, and the licenses of the bundled QR library and fonts |
 | `docs/` | README images: club logo, page screenshot and example label |
 | `vendor/qrcode.js` | [qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator) 1.4.4 (MIT) |
 
 The printer protocol comes from the reverse-engineering work in
 [vivier/phomemo-tools](https://github.com/vivier/phomemo-tools).
+
+## Releasing
+
+The version lives in one place, `package.json`. Everything else is
+generated from it. You need Node.js to make a release, but not to use the
+page.
+
+1. As you work, note user-visible changes under `## [Unreleased]` in
+   `CHANGELOG.md`.
+2. On a clean `main`, run one of:
+
+   ```sh
+   npm version patch   # 1.0.0 -> 1.0.1: fixes
+   npm version minor   # 1.0.0 -> 1.1.0: new features
+   npm version major   # 1.0.0 -> 2.0.0: changes that break existing use
+   ```
+
+   This updates the version in `package.json` and the page footer, moves
+   the Unreleased notes into a dated section for the new version, then
+   commits and tags (`v1.1.0`).
+3. `git push --follow-tags`
+
+Pushing the tag runs the **Release** GitHub Action. It checks that the tag,
+`package.json`, the page footer and the changelog all agree. Then it builds
+`iNat-foray-printer-v<version>.zip` and publishes the GitHub release, using
+that version's changelog section as the release notes.
+
+| Command | What it does |
+|---|---|
+| `npm run check-version` | Fails if any file shows a different version from `package.json` |
+| `npm run build` | Builds the download zip and release notes into `dist/` from the last commit |
+
+Development files (`package.json`, `scripts/`, `.github/`) are left out of
+the download; see `.gitattributes`. To add another place that shows the
+version, add it to the `targets` list in `scripts/version.mjs`.
 
 ## License
 
