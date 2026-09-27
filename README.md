@@ -114,8 +114,8 @@ Settings are saved in the browser.
 | `js/datamatrix.js` | Minimal Data Matrix (ECC 200) encoder for the iNat number |
 | `js/phomemo.js` | M110/M120/M220 printer protocol, plus the Web Serial and Web Bluetooth connections |
 | `js/app.js` | Selection, preview, printing and CSV export |
-| `img/wpmc-mark.png`, `fonts/` | WPMC logo, and the club website's DM Sans and DM Serif Display fonts (SIL OFL, see `fonts/OFL.txt`) |
-| `LICENSE` | MIT License with Commons Clause, plus third-party notices |
+| `img/wpmc-mark.png`, `fonts/` | WPMC logo, and the club website's DM Sans and DM Serif Display fonts (SIL OFL 1.1) |
+| `LICENSE`, `THIRD-PARTY-NOTICES.md` | MIT License, and the licenses of the bundled QR library and fonts |
 | `docs/` | README images: club logo, page screenshot and example label |
 | `vendor/qrcode.js` | [qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator) 1.4.4 (MIT) |
 
@@ -124,8 +124,6 @@ The printer protocol comes from the reverse-engineering work in
 
 ## License
 
-[MIT License with the Commons Clause](LICENSE), © 2026 Western Pennsylvania
-Mushroom Club. You may use, copy, modify and share the software, but not sell
-it, including selling hosting or support services whose value comes mainly from
-it. The bundled QR library, fonts and the WPMC logo keep their own terms; see
-[LICENSE](LICENSE).
+[MIT License](LICENSE), © 2026 Western Pennsylvania Mushroom Club. Bundled
+third-party components (the QR code library and the DM fonts) keep their own
+licenses; see [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).

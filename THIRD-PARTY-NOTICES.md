@@ -1,6 +1,16 @@
+# Third-party notices
+
+iNat Foray Printer is released under the [MIT License](LICENSE). It bundles
+the following third-party components, each under its own license.
+
+## qrcode-generator 1.4.4
+
+`vendor/qrcode.js`, from <https://github.com/kazuhikoarase/qrcode-generator>.
+
+```
 MIT License
 
-Copyright (c) 2026 Western Pennsylvania Mushroom Club
+Copyright (c) 2009 Kazuhiko Arase
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -19,3 +29,18 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+```
+
+## DM Sans and DM Serif Display fonts
+
+`fonts/dm-sans-latin.woff2` and `fonts/dm-serif-display-latin.woff2`,
+unmodified subsets as served by Google Fonts. Licensed under the SIL Open Font
+License, Version 1.1; the full license text and copyright notices are in
+[`fonts/OFL-DMSans.txt`](fonts/OFL-DMSans.txt) and
+[`fonts/OFL-DMSerifDisplay.txt`](fonts/OFL-DMSerifDisplay.txt).
+
+## WPMC logo
+
+`img/wpmc-mark.png` and `docs/wpmc-logo.png` are the Western Pennsylvania
+Mushroom Club's logo artwork. They are included to brand the page and are not
+covered by the MIT License.
