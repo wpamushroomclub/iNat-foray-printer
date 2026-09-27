@@ -10,22 +10,27 @@ There is no install and no build step. It is plain HTML and JavaScript.
 
 ```
  paper output direction ▲
-┌───────────────────────────────────────┬─────┐
-│ ▄▄▄▄▄▄▄  iNat #                       │ ▌ 2 │
-│ █ QR  █  293293734                    │ ▌ 9 │   QR code = "<iNat #><TAB><username>"
-│ █     █  lostculture                  │ ▌ 3 │
-│ ▀▀▀▀▀▀▀  2026-09-09 09:42             │ ▌ … │   Side strip (rotated 90°):
-│ Hydnellum scrobiculatum               │ ▌   │     Code 128 barcode of the iNat #,
-│ Epping Forest, Loughton, UK           │ ▌   │     then iNat # + date/time, username, species
-└───────────────────────────────────────┴─────┘
+┌───────────────────────────────────────┬────┐
+│ ▄▄▄▄▄▄▄  iNat #                       │ ▚ 2│
+│ █ QR  █  293293734                    │   9│   QR code = "<iNat #><TAB><username>"
+│ █     █  lostculture                  │   3│
+│ █     █  Richard Jacob                │   …│   Side strip (rotated 90°):
+│ ▀▀▀▀▀▀▀  2026-09-09 09:42             │    │     Data Matrix + iNat #,
+│ Hydnellum scrobiculatum               │    │     date/time,
+│ Epping Forest, Loughton, UK           │    │     species
+└───────────────────────────────────────┴────┘
 ```
 
 * **The side strip is cut off along the divider line and kept with the
-  physical voucher.** It stands alone: a Code 128 barcode of just the iNat
-  number, then three rows: the number with the date and time beside it, the
-  username, and the species. The barcode sits about 1.25 mm from the line, so
-  a slightly off cut does not clip it. The strip is 26% of the label width,
-  15.6 mm on a 60 mm label.
+  physical voucher.** It stands alone: a Data Matrix code of just the iNat
+  number with the number printed beside it, then the date and time, then the
+  species. The code sits about 1.25 mm from the line, so a slightly off cut
+  does not clip it. It is a 2D code rather than a 1D barcode because 1D bars
+  only 2 dots wide merge when printed; Data Matrix squares are 3 dots and
+  error-corrected. The strip is 22% of the label width, 13.2 mm on
+  a 60 mm label.
+* The observer's real name from their iNat profile is printed under the
+  username, when they have set one.
 * Scientific names at genus rank and below are printed in italics.
 * The date and time are the observation's local time.
 * The location is iNaturalist's place name (`place_guess`), wrapped and sized
@@ -100,7 +105,8 @@ Settings are saved in the browser.
 |---|---|
 | `index.html`, `css/app.css` | Page and styles |
 | `js/inat.js` | iNaturalist API search, with paging and time-zone handling |
-| `js/label.js` | Draws a label (QR code, Code 128 barcode, text) onto a 1-bit canvas at 203 dpi |
+| `js/label.js` | Draws a label (QR code, Data Matrix, text) onto a 1-bit canvas at 203 dpi |
+| `js/datamatrix.js` | Minimal Data Matrix (ECC 200) encoder for the iNat number |
 | `js/phomemo.js` | M110/M120/M220 printer protocol, plus the Web Serial and Web Bluetooth connections |
 | `js/app.js` | Selection, preview, printing and CSV export |
 | `vendor/qrcode.js` | [qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator) 1.4.4 (MIT) |

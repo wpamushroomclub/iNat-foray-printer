@@ -69,52 +69,18 @@
     return { px: wrapPx, lines: wrap(ctx, text, maxWidth, maxLines) };
   }
 
-  // Code 128 bar/space widths for symbol values 0..106 (106 = stop).
-  var C128 = ('212222 222122 222221 121223 121322 131222 122213 122312 132212 221213 ' +
-    '221312 231212 112232 122132 122231 113222 123122 123221 223211 221132 ' +
-    '221231 213212 223112 312131 311222 321122 321221 312212 322112 322211 ' +
-    '212123 212321 232121 111323 131123 131321 112313 132113 132311 211313 ' +
-    '231113 231311 112133 112331 132131 113123 113321 133121 313121 211331 ' +
-    '231131 213113 213311 213131 311123 311321 331121 312113 312311 332111 ' +
-    '314111 221411 431111 111224 111422 121124 121421 141122 141221 112214 ' +
-    '112412 122114 122411 142112 142211 241211 221114 413111 241112 134111 ' +
-    '111242 121142 121241 114212 124112 124211 411212 421112 421211 212141 ' +
-    '214121 412121 111143 111341 131141 114113 114311 411113 411311 113141 ' +
-    '114131 311141 411131 211412 211214 211232 2331112').split(' ');
-
-  // Encodes a digit string as Code 128 symbol values: code set C (digit
-  // pairs), switching to code set B for a trailing odd digit.
-  function code128Digits(digits) {
-    var values = [105]; // Start C
-    var i = 0;
-    for (; i + 1 < digits.length; i += 2) values.push(parseInt(digits.substr(i, 2), 10));
-    if (i < digits.length) {
-      values.push(100); // Code B
-      values.push(digits.charCodeAt(i) - 32);
-    }
-    var sum = values[0];
-    for (var j = 1; j < values.length; j++) sum += j * values[j];
-    values.push(sum % 103, 106);
-    return values;
-  }
-
-  // Draws a Code 128 barcode with bars running across the current y axis.
-  // Returns the drawn length (excluding quiet zones) or 0 if it cannot fit.
-  function drawCode128(ctx, digits, x, y, maxLen, height) {
-    var widths = code128Digits(digits).map(function (v) { return C128[v]; }).join('');
-    var modules = 0;
-    for (var i = 0; i < widths.length; i++) modules += +widths[i];
-    var quiet = 10; // modules of white either side, required by scanners
-    var m = Math.min(3, Math.floor(maxLen / (modules + 2 * quiet)));
+  // Draws a Data Matrix of the digits with squares of up to maxModule dots,
+  // fitting within size x size dots. Returns the drawn size or 0 if it cannot fit.
+  function drawDataMatrix(ctx, digits, x, y, size, maxModule) {
+    var dm = global.DataMatrix.encode(digits);
+    var m = Math.min(maxModule, Math.floor(size / dm.size));
     if (m < 1) return 0;
-    var len = modules * m;
-    var cx = x + Math.floor((maxLen - len) / 2);
-    for (var b = 0; b < widths.length; b++) {
-      var w = +widths[b] * m;
-      if (b % 2 === 0) ctx.fillRect(cx, y, w, height);
-      cx += w;
+    for (var r = 0; r < dm.size; r++) {
+      for (var c = 0; c < dm.size; c++) {
+        if (dm.isDark(r, c)) ctx.fillRect(x + c * m, y + r * m, m, m);
+      }
     }
-    return len;
+    return dm.size * m;
   }
 
   function drawQr(ctx, payload, x, y, maxSize) {
@@ -175,9 +141,9 @@
     var k = Math.min(W / 480, H / 320);
     var pad = Math.round(12 * k);
     // The side strip is cut off along the divider and kept with the physical
-    // voucher, so it carries its own barcode and details: a barcode plus three
-    // text rows (about 20 dots each) at 26% of the label width.
-    var stripW = Math.round(W * 0.26);
+    // voucher, so it carries its own barcode and details: a barcode plus two
+    // text rows (about 20 dots each) at 22% of the label width.
+    var stripW = Math.round(W * 0.22);
     var ruleW = Math.max(3, Math.round(4 * k));
     var ruleX = W - stripW;
     var mainRight = ruleX - Math.round(10 * k);
@@ -205,6 +171,13 @@
     ctx.font = font(userPx);
     y += Math.round(userPx * 1.15);
     ctx.fillText(ellipsize(ctx, obs.username, tw), tx, y);
+
+    if (obs.userFullName) {
+      var namePx = fitSize(ctx, obs.userFullName, tw, Math.round(22 * k), Math.round(14 * k));
+      ctx.font = font(namePx);
+      y += Math.round(namePx * 1.15);
+      ctx.fillText(ellipsize(ctx, obs.userFullName, tw), tx, y);
+    }
 
     var dt = dateTime(obs);
     var dtPx = fitSize(ctx, dt, tw, Math.round(22 * k), Math.round(14 * k));
@@ -249,39 +222,24 @@
     ctx.save();
     ctx.translate(ruleX + ruleW + cutGap, H - pad);
     ctx.rotate(-Math.PI / 2);
-    // Barcode of the iNat number nearest the cut line, then text rows.
-    var barH = Math.round(stripInner * 0.36);
-    drawCode128(ctx, String(obs.id), 0, 0, along, barH);
-    // Each row is one or more parts drawn side by side at a shared size.
-    var rows = [
-      { parts: [{ text: String(obs.id), bold: true }, { text: dt }], weight: 1.15 },
-      { parts: [{ text: obs.username }], weight: 1 },
-      { parts: [{ text: species, italic: italic }], weight: 1 }
-    ];
-    function rowWidth(parts, px) {
-      var w = px * 0.6 * (parts.length - 1); // gap between parts
-      parts.forEach(function (p) {
-        ctx.font = font(px, p);
-        w += ctx.measureText(p.text).width;
-      });
-      return w;
-    }
-    var totalWeight = rows.reduce(function (s, r) { return s + r.weight; }, 0);
+    // Data Matrix of the iNat number nearest the cut line, with the number
+    // beside it, then the date and time, then the species.
+    // Squares of 3+ dots survive thermal ink spread, where thin 1D bars merge.
+    var barH = Math.round(38 * k); // 12x12 symbol at 3 dots per square
+    var dmSize = drawDataMatrix(ctx, String(obs.id), 0, 0, barH, 4);
+    var idX = dmSize + Math.round(8 * k);
+    var sideIdPx = fitSize(ctx, String(obs.id), along - idX, Math.round(barH * 0.8), Math.round(11 * k), { bold: true });
+    ctx.font = font(sideIdPx, { bold: true });
+    ctx.fillText(ellipsize(ctx, String(obs.id), along - idX), idX, Math.round(barH / 2 + sideIdPx * 0.36));
+
+    var rows = [{ text: dt }, { text: species, italic: italic }];
     var sy = barH + Math.round(2 * k);
-    var unit = (stripInner - sy) / (totalWeight * 1.12);
-    var minPx = Math.round(11 * k);
+    var rowH = (stripInner - sy) / rows.length;
     rows.forEach(function (row) {
-      var px = Math.floor(unit * row.weight);
-      while (px > minPx && rowWidth(row.parts, px) > along) px--;
-      sy += Math.round(unit * row.weight * 1.12 * 0.5 + px * 0.36);
-      var sx = 0;
-      row.parts.forEach(function (p) {
-        ctx.font = font(px, p);
-        var text = ellipsize(ctx, p.text, along - sx);
-        ctx.fillText(text, sx, sy);
-        sx += ctx.measureText(text).width + px * 0.6;
-      });
-      sy += Math.round(unit * row.weight * 1.12 * 0.5 - px * 0.36);
+      var px = fitSize(ctx, row.text, along, Math.floor(rowH / 1.12), Math.round(11 * k), row);
+      ctx.font = font(px, row);
+      ctx.fillText(ellipsize(ctx, row.text, along), 0, Math.round(sy + rowH / 2 + px * 0.36));
+      sy += rowH;
     });
     ctx.restore();
 
