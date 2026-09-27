@@ -6,6 +6,14 @@ All notable changes to this project are recorded here. The format follows
 
 ## [Unreleased]
 
+### Fixed
+
+- Opening the page at an address without a trailing slash (for example
+  `/tools/inat-foray-printer`) loaded it without its styles and scripts; it
+  now adds the slash.
+- The footer's MIT License link opens the license on GitHub instead of
+  downloading a file when the page is hosted.
+
 ## [1.0.0] - 2026-09-27
 
 First release.

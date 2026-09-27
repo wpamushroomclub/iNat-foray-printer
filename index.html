@@ -4,6 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>iNat Foray Printer</title>
+<script>
+  // Served as .../inat-foray-printer (no trailing slash), the relative paths
+  // below would resolve one folder too high, so add the slash first.
+  if (/^https?:$/.test(location.protocol) && !/\/$|\.[^/]*$/.test(location.pathname)) {
+    location.replace(location.pathname + '/' + location.search + location.hash);
+  }
+</script>
 <link rel="icon" href="img/wpmc-mark.png">
 <link rel="stylesheet" href="css/app.css">
 </head>
@@ -123,7 +130,7 @@
   <a href="?demo=1">Demo data</a> for testing without a network.<br>
   iNat Foray Printer <span id="app-version">v1.0.0</span> · © 2026 Western Pennsylvania Mushroom Club ·
   <a href="https://github.com/wpamushroomclub/iNat-foray-printer" rel="noopener">Source</a> ·
-  <a href="LICENSE">MIT License</a>
+  <a href="https://github.com/wpamushroomclub/iNat-foray-printer/blob/main/LICENSE" rel="noopener">MIT License</a>
 </footer>
 
 <script src="vendor/qrcode.js"></script>
