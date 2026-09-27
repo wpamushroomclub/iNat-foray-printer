@@ -1,0 +1,21 @@
+DM Sans and DM Serif Display are licensed under the
+SIL Open Font License, Version 1.1 — https://openfontlicense.org
+
+  DM Sans           © Colophon Foundry, Jonny Pinhorn, Indian Type Foundry
+  DM Serif Display  © Colophon Foundry, Jonny Pinhorn, Indian Type Foundry
+
+The OFL permits self-hosting, so these .woff2 files are served from this site
+rather than from fonts.googleapis.com (WPM-130).
+
+The files are Google's own subsets, taken unmodified from the CSS that this URL
+returns to a modern browser:
+
+  https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap
+
+To refresh them, fetch that URL with a current Chrome User-Agent (the response
+varies by UA — an older one gets .ttf instead of .woff2), download each unique
+url() it names, and copy the unicode-range values into the @font-face block in
+src/styles/global.css. The ranges are not decoration: they are what stops a
+reader who never types an accented character from downloading the ext subsets.
+
+Full licence text: https://openfontlicense.org/open-font-license-official-text/

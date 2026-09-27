@@ -1,26 +1,28 @@
+<p align="center">
+  <a href="https://wpamushroomclub.org"><img src="docs/wpmc-logo.png" alt="Western Pennsylvania Mushroom Club" width="320"></a>
+</p>
+
 # iNat Foray Printer
 
-A single web page that finds all of an iNaturalist user's observations for one
-day, lets you tick which ones you want, and prints a specimen label for each on
-a **Phomemo M220** (60 × 40 mm / 2.36″ × 1.57″ labels by default).
+A single web page from the **Western Pennsylvania Mushroom Club** that finds all
+of an iNaturalist user's observations for one day, lets you tick which ones you
+want, and prints a specimen label for each on a **Phomemo M220** (60 × 40 mm /
+2.36″ × 1.57″ labels by default).
 
 There is no install and no build step. It is plain HTML and JavaScript.
 
+![The iNat Foray Printer page in demo mode](docs/screenshot.png)
+
 ## Label layout
 
-```
- paper output direction ▲
-┌───────────────────────────────────────┬────┐
-│ ▄▄▄▄▄▄▄  iNat #                       │ ▚ 2│
-│ █ QR  █  293293734                    │   9│   QR code = "<iNat #><TAB><username>"
-│ █     █  lostculture                  │   3│
-│ █     █  Richard Jacob                │   …│   Side strip (rotated 90°):
-│ ▀▀▀▀▀▀▀  2026-09-09 09:42             │    │     Data Matrix + iNat #,
-│ Hydnellum scrobiculatum               │    │     date/time,
-│ Epping Forest, Loughton, UK           │    │     species
-└───────────────────────────────────────┴────┘
-```
+This is the demo label exactly as the page draws it (480 × 320 dots, shown at
+2×, with no rotation; the paper output direction is up). The observer is a demo
+account and the iNat number is made up.
 
+![Example 60 × 40 mm label: QR code, iNat number 279870013, username foray_demo, name Morgan Fielding, date and time, species and location, with a cut-off side strip](docs/label-example.png)
+
+* **The QR code** holds `<iNat #><TAB><username>`, for example
+  `279870013⇥foray_demo`.
 * **The side strip is cut off along the divider line and kept with the
   physical voucher.** It stands alone: a Data Matrix code of just the iNat
   number with the number printed beside it, then the date and time, then the
@@ -106,12 +108,14 @@ Settings are saved in the browser.
 
 | Path | Purpose |
 |---|---|
-| `index.html`, `css/app.css` | Page and styles |
+| `index.html`, `css/app.css` | Page, styled to match the WPMC website |
 | `js/inat.js` | iNaturalist API search, with paging and time-zone handling |
 | `js/label.js` | Draws a label (QR code, Data Matrix, text) onto a 1-bit canvas at 203 dpi |
 | `js/datamatrix.js` | Minimal Data Matrix (ECC 200) encoder for the iNat number |
 | `js/phomemo.js` | M110/M120/M220 printer protocol, plus the Web Serial and Web Bluetooth connections |
 | `js/app.js` | Selection, preview, printing and CSV export |
+| `img/wpmc-mark.png`, `fonts/` | WPMC logo, and the club website's DM Sans and DM Serif Display fonts (SIL OFL, see `fonts/OFL.txt`) |
+| `docs/` | README images: club logo, page screenshot and example label |
 | `vendor/qrcode.js` | [qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator) 1.4.4 (MIT) |
 
 The printer protocol comes from the reverse-engineering work in

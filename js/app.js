@@ -348,15 +348,15 @@
 
   function demoObservations(username, date) {
     var rows = [
-      [293293734, '09:42', 'Hydnellum scrobiculatum', 'species', 'Zoned Tooth', 'Epping Forest, Loughton, UK'],
-      [293293801, '10:05', 'Amanita muscaria', 'species', 'Fly Agaric', 'Epping Forest, Loughton, UK'],
-      [293294117, '10:31', 'Cortinarius', 'genus', 'Webcaps', 'Wake Valley Pond, Epping Forest, Essex, England, United Kingdom'],
-      [293294560, '11:12', 'Hypholoma fasciculare', 'species', 'Sulphur Tuft', 'High Beach, Waltham Abbey, UK'],
-      [293295002, '', 'Agaricomycetes', 'class', 'Mushroom-forming Fungi', 'Epping Forest, UK']
+      [279870013, '09:42', 'Hydnellum scrobiculatum', 'species', 'Zoned Tooth', 'Epping Forest, Loughton, UK'],
+      [279870080, '10:05', 'Amanita muscaria', 'species', 'Fly Agaric', 'Epping Forest, Loughton, UK'],
+      [279870396, '10:31', 'Cortinarius', 'genus', 'Webcaps', 'Wake Valley Pond, Epping Forest, Essex, England, United Kingdom'],
+      [279870839, '11:12', 'Hypholoma fasciculare', 'species', 'Sulphur Tuft', 'High Beach, Waltham Abbey, UK'],
+      [279871281, '', 'Agaricomycetes', 'class', 'Mushroom-forming Fungi', 'Epping Forest, UK']
     ];
     return rows.map(function (r) {
       return {
-        id: r[0], username: username, userFullName: 'Demo Observer', date: date, time: r[1], species: r[2],
+        id: r[0], username: username, userFullName: 'Morgan Fielding', date: date, time: r[1], species: r[2],
         rank: r[3], commonName: r[4], place: r[5], latitude: '51.6612', longitude: '0.0512',
         obscured: false, photo: '', url: 'https://www.inaturalist.org/observations/' + r[0]
       };
@@ -398,7 +398,7 @@
     conn(notes.join(' '));
     if (isDemo()) {
       status('Demo mode: Find returns sample observations without contacting iNaturalist.');
-      if (!$('username').value) $('username').value = 'lostculture';
+      if (!$('username').value) $('username').value = 'foray_demo';
     }
     renderPreview();
     updateControls();

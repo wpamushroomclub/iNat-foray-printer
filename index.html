@@ -4,12 +4,19 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>iNat Foray Printer</title>
+<link rel="icon" href="img/wpmc-mark.png">
 <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
 <header class="bar">
-  <h1>iNat Foray Printer</h1>
-  <span class="sub">Phomemo M220 specimen labels</span>
+  <a class="brand" href="https://wpamushroomclub.org" rel="noopener">
+    <img src="img/wpmc-mark.png" alt="" width="48" height="48">
+    <span>WPMC</span>
+  </a>
+  <div class="titles">
+    <span class="sub">Phomemo M220 specimen labels</span>
+    <h1>iNat Foray Printer</h1>
+  </div>
 </header>
 
 <main>
@@ -17,7 +24,7 @@
     <h2 id="find-h">1. Find observations</h2>
     <form id="find-form" class="find">
       <label>iNat username
-        <input id="username" name="username" required autocomplete="username" spellcheck="false" placeholder="e.g. lostculture">
+        <input id="username" name="username" required autocomplete="username" spellcheck="false" placeholder="e.g. foray_demo">
       </label>
       <label>Date
         <input id="date" name="date" type="date" required>
