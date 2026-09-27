@@ -5,11 +5,11 @@
   var $ = function (id) { return document.getElementById(id); };
 
   var DEFAULTS = {
-    widthMm: 60, heightMm: 40, density: 10, speed: 3, media: 'gaps', offsetDots: 0, rotate180: false
+    widthMm: 60, heightMm: 40, density: 10, speed: 3, media: 'gaps', offsetDots: 0, rotation: '270'
   };
   var SETTING_INPUTS = {
     widthMm: 's-width', heightMm: 's-height', density: 's-density', speed: 's-speed',
-    media: 's-media', offsetDots: 's-offset', rotate180: 's-rotate'
+    media: 's-media', offsetDots: 's-offset', rotation: 's-rotate'
   };
 
   var state = {
@@ -182,6 +182,7 @@
     var c = renderOne(o);
     target.width = c.width;
     target.height = c.height;
+    target.classList.toggle('portrait', c.height > c.width);
     ctx.drawImage(c, 0, 0);
     $('preview-cap').textContent = 'Preview of ' + o.id + ' at ' + state.settings.widthMm + ' × ' +
       state.settings.heightMm + ' mm (' + c.width + ' × ' + c.height + ' dots). Paper exits from the top edge.';
@@ -222,11 +223,21 @@
   }
 
   // ---- Printing: Windows driver (browser print dialog) ---------------------
+  // Only Chromium browsers (Chrome, Edge) pass the page orientation through to
+  // the driver. Firefox shows portrait in its preview but sends a landscape
+  // job, which the M220 driver prints turned 90°.
+  var DRIVER_NOTE = 'Printing via the Windows printer only comes out the right way round ' +
+    'in Chrome or Edge; this browser may print the label turned 90°.';
+  function driverOrientationReliable() { return !!navigator.userAgentData; }
+
   function printViaDriver() {
     var list = selectedObservations();
     if (!list.length) return;
-    var w = state.settings.widthMm;
-    var h = state.settings.heightMm;
+    if (!driverOrientationReliable()) conn(DRIVER_NOTE, true);
+    var canvases = list.map(renderOne);
+    // Image size follows the rendered label, which is swapped when rotated 90°.
+    var w = canvases[0].width / LabelRenderer.DOTS_PER_MM;
+    var h = canvases[0].height / LabelRenderer.DOTS_PER_MM;
     var frame = document.createElement('iframe');
     frame.setAttribute('aria-hidden', 'true');
     frame.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0;visibility:hidden';
@@ -234,19 +245,22 @@
     var doc = frame.contentDocument;
     doc.open();
     doc.write('<!doctype html><html><head><title>iNat labels</title><style>' +
-      '@page{size:' + w + 'mm ' + h + 'mm;margin:0}' +
+      // An explicit size wider than tall makes Chrome send a landscape job,
+      // which the M220 driver turns 90° clockwise. Forcing portrait sends the
+      // page as-is onto the driver's 60 x 40 mm paper.
+      '@page{size:portrait;margin:0}' +
       'html,body{margin:0;padding:0}' +
       'img{display:block;width:' + w + 'mm;height:' + h + 'mm;image-rendering:pixelated;break-inside:avoid}' +
       'img:not(:last-child){break-after:page;page-break-after:always}' +
       '</style></head><body></body></html>');
     doc.close();
-    var loads = list.map(function (o) {
+    var loads = list.map(function (o, i) {
       var img = doc.createElement('img');
       img.alt = String(o.id);
       doc.body.appendChild(img);
       return new Promise(function (resolve) {
         img.onload = img.onerror = resolve;
-        img.src = renderOne(o).toDataURL('image/png');
+        img.src = canvases[i].toDataURL('image/png');
       });
     });
     Promise.all(loads).then(function () {
@@ -376,6 +390,7 @@
     });
 
     var notes = [];
+    if (!driverOrientationReliable()) notes.push(DRIVER_NOTE);
     if (!Phomemo.SerialPrinter.supported()) notes.push('USB/COM printing needs Chrome or Edge on a computer.');
     if (!Phomemo.BlePrinter.supported()) notes.push('Bluetooth printing needs Chrome or Edge.');
     conn(notes.join(' '));

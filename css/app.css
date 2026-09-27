@@ -98,6 +98,7 @@ td img { width: 44px; height: 44px; object-fit: cover; border-radius: 4px; displ
   width: 100%; height: auto; display: block; background: #fff;
   border: 1px solid var(--line); border-radius: 8px; image-rendering: pixelated;
 }
+.preview canvas.portrait { width: 66.7%; margin: 0 auto; }
 .preview figcaption { margin-top: .35rem; font-size: .8rem; color: var(--muted); }
 .actions { display: grid; gap: .5rem; }
 .actions .row { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; }

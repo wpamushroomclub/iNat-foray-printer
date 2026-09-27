@@ -16,21 +16,25 @@ There is no install and no build step. It is plain HTML and JavaScript.
 │ █     █  lostculture                  │ ▌ 3 │
 │ ▀▀▀▀▀▀▀  2026-09-09 09:42             │ ▌ … │   Side strip (rotated 90°):
 │ Hydnellum scrobiculatum               │ ▌   │     Code 128 barcode of the iNat #,
-│ Epping Forest, Loughton, UK           │ ▌   │     then iNat #, username, date + time, species
+│ Epping Forest, Loughton, UK           │ ▌   │     then iNat # + date/time, username, species
 └───────────────────────────────────────┴─────┘
 ```
 
 * **The side strip is cut off along the divider line and kept with the
   physical voucher.** It stands alone: a Code 128 barcode of just the iNat
-  number, then the number, username, date and time, and species. The barcode
-  sits about 1.25 mm from the line, so a slightly off cut does not clip it.
-  The strip is 30% of the label width, 18 mm on a 60 mm label.
+  number, then three rows: the number with the date and time beside it, the
+  username, and the species. The barcode sits about 1.25 mm from the line, so
+  a slightly off cut does not clip it. The strip is 26% of the label width,
+  15.6 mm on a 60 mm label.
 * Scientific names at genus rank and below are printed in italics.
 * The date and time are the observation's local time.
 * The location is iNaturalist's place name (`place_guess`), wrapped and sized
   to fit.
 * When scanned, the QR code types the number, a Tab, then the username. A
   scanner used as a keyboard therefore fills two spreadsheet cells.
+  Zebra scanners (for example the DS9308) send Tab as Ctrl+I by default, so
+  both land in one cell: scan **Enable Function Key Mapping** from the
+  scanner's Product Reference Guide (USB Host Parameters) to fix this.
 
 ## Using it
 
@@ -60,7 +64,12 @@ In the print dialog:
 
 * **Destination:** Phomemo M220
 * **More settings → Paper size:** 60 × 40 mm. If that size isn't listed, add
-  it in the driver's *Printing preferences*.
+  it in the driver's *Printing preferences* as 60 × 40 mm, portrait. The page
+  asks Chrome for portrait: a landscape job makes the M220 driver turn the
+  label 90°, even though the print preview looks right.
+* **Use Chrome or Edge.** Firefox shows portrait in its print preview but
+  still sends a landscape job, so the label prints turned 90°. The page
+  shows a warning in browsers other than Chrome and Edge.
 * **Margins:** None
 * **Scale:** Default (100%)
 
@@ -68,7 +77,8 @@ Chrome remembers these settings for next time.
 
 ### Direct printing: calibration
 
-Direct printing sends the label as a 480 × 320 dot image (8 dots = 1 mm).
+Direct printing sends the label as a 480 × 320 dot image (8 dots = 1 mm),
+or 320 × 480 when it is rotated 90°.
 Open **Label & printer settings** to adjust:
 
 * **Density** (1–15): how dark the print is. Raise it if the print is faint.
@@ -76,7 +86,11 @@ Open **Label & printer settings** to adjust:
 * **Media:** labels with gaps (default), continuous roll, or black-mark labels.
 * **Left offset:** shifts the image right if the print sits too far left on
   the label.
-* **Rotate 180°:** use this if the label comes out upside down.
+* **Rotation:** turns the printed image to match how the label feeds.
+  The default is 90° clockwise, which prints correctly on the M220 through
+  the Windows driver in Chrome; the other options are none,
+  90° counter-clockwise and 180°. This applies to every printing method and
+  the preview.
 
 Settings are saved in the browser.
 

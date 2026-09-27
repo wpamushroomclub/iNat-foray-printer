@@ -156,8 +156,8 @@
   /**
    * Renders a label for one observation.
    * obs:  {id, username, date, time, species, rank, place}
-   * opts: {widthMm, heightMm, rotate180}
-   * Returns a canvas of widthMm*8 x heightMm*8 dots.
+   * opts: {widthMm, heightMm, rotation}  (rotation: degrees counter-clockwise)
+   * Returns a canvas of widthMm*8 x heightMm*8 dots (swapped at 90/270).
    */
   function render(obs, opts) {
     var W = Math.round(opts.widthMm * DOTS_PER_MM);
@@ -175,8 +175,9 @@
     var k = Math.min(W / 480, H / 320);
     var pad = Math.round(12 * k);
     // The side strip is cut off along the divider and kept with the physical
-    // voucher, so it carries its own barcode and details.
-    var stripW = Math.round(W * 0.30);
+    // voucher, so it carries its own barcode and details: a barcode plus three
+    // text rows (about 20 dots each) at 26% of the label width.
+    var stripW = Math.round(W * 0.26);
     var ruleW = Math.max(3, Math.round(4 * k));
     var ruleX = W - stripW;
     var mainRight = ruleX - Math.round(10 * k);
@@ -249,40 +250,62 @@
     ctx.translate(ruleX + ruleW + cutGap, H - pad);
     ctx.rotate(-Math.PI / 2);
     // Barcode of the iNat number nearest the cut line, then text rows.
-    var barH = Math.round(stripInner * 0.3);
+    var barH = Math.round(stripInner * 0.36);
     drawCode128(ctx, String(obs.id), 0, 0, along, barH);
+    // Each row is one or more parts drawn side by side at a shared size.
     var rows = [
-      { text: String(obs.id), bold: true, weight: 1.15 },
-      { text: obs.username, weight: 1 },
-      { text: dt, weight: 1 },
-      { text: species, italic: italic, weight: 1 }
+      { parts: [{ text: String(obs.id), bold: true }, { text: dt }], weight: 1.15 },
+      { parts: [{ text: obs.username }], weight: 1 },
+      { parts: [{ text: species, italic: italic }], weight: 1 }
     ];
+    function rowWidth(parts, px) {
+      var w = px * 0.6 * (parts.length - 1); // gap between parts
+      parts.forEach(function (p) {
+        ctx.font = font(px, p);
+        w += ctx.measureText(p.text).width;
+      });
+      return w;
+    }
     var totalWeight = rows.reduce(function (s, r) { return s + r.weight; }, 0);
     var sy = barH + Math.round(2 * k);
     var unit = (stripInner - sy) / (totalWeight * 1.12);
+    var minPx = Math.round(11 * k);
     rows.forEach(function (row) {
-      var opts2 = { bold: row.bold, italic: row.italic };
-      var px = fitSize(ctx, row.text, along, Math.floor(unit * row.weight), Math.round(11 * k), opts2);
-      ctx.font = font(px, opts2);
+      var px = Math.floor(unit * row.weight);
+      while (px > minPx && rowWidth(row.parts, px) > along) px--;
       sy += Math.round(unit * row.weight * 1.12 * 0.5 + px * 0.36);
-      ctx.fillText(ellipsize(ctx, row.text, along), 0, sy);
+      var sx = 0;
+      row.parts.forEach(function (p) {
+        ctx.font = font(px, p);
+        var text = ellipsize(ctx, p.text, along - sx);
+        ctx.fillText(text, sx, sy);
+        sx += ctx.measureText(text).width + px * 0.6;
+      });
       sy += Math.round(unit * row.weight * 1.12 * 0.5 - px * 0.36);
     });
     ctx.restore();
 
     binarize(ctx, W, H);
 
-    if (opts.rotate180) {
-      var out = document.createElement('canvas');
-      out.width = W;
-      out.height = H;
-      var octx = out.getContext('2d');
-      octx.translate(W, H);
-      octx.rotate(Math.PI);
-      octx.drawImage(canvas, 0, 0);
-      return out;
-    }
-    return canvas;
+    return rotate(canvas, +opts.rotation || 0);
+  }
+
+  // Rotates a canvas counter-clockwise by 0, 90, 180 or 270 degrees.
+  function rotate(canvas, degCcw) {
+    var W = canvas.width;
+    var H = canvas.height;
+    var turns = ((Math.round(degCcw / 90) % 4) + 4) % 4;
+    if (!turns) return canvas;
+    var out = document.createElement('canvas');
+    out.width = turns % 2 ? H : W;
+    out.height = turns % 2 ? W : H;
+    var octx = out.getContext('2d');
+    if (turns === 1) octx.translate(0, W);
+    else if (turns === 2) octx.translate(W, H);
+    else octx.translate(H, 0);
+    octx.rotate(-turns * Math.PI / 2);
+    octx.drawImage(canvas, 0, 0);
+    return out;
   }
 
   global.LabelRenderer = {
