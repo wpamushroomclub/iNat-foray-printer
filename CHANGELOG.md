@@ -6,6 +6,8 @@ All notable changes to this project are recorded here. The format follows
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-09-27
+
 ### Fixed
 
 - Opening the page at an address without a trailing slash (for example
@@ -33,5 +35,6 @@ First release.
 - Demo mode (`index.html?demo=1`).
 - WPMC website styling, MIT License.
 
-[Unreleased]: https://github.com/wpamushroomclub/iNat-foray-printer/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/wpamushroomclub/iNat-foray-printer/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/wpamushroomclub/iNat-foray-printer/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/wpamushroomclub/iNat-foray-printer/releases/tag/v1.0.0
