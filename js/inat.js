@@ -6,6 +6,11 @@
   var API = 'https://api.inaturalist.org/v1/observations';
   var PER_PAGE = 200;
 
+  // iNat taxa for the fungi filter: Fungi (includes lichens) and Mycetozoa
+  // (slime molds). Protozoa and Life are too broad to rule a slime mold out.
+  var FUNGAL_TAXA = [47170, 47685];
+  var TOO_BROAD = [48460, 47686];
+
   // Local time of observation, in the observation's own time zone when known.
   function timeOf(o) {
     if (!o.time_observed_at) return '';
@@ -18,6 +23,14 @@
     }
     var m = /T(\d\d:\d\d)/.exec(o.time_observed_at);
     return m ? m[1] : '';
+  }
+
+  // True for fungi, lichens and slime molds, and for observations with no ID
+  // or one too broad to tell, which may still be one of them.
+  function isFungal(t) {
+    if (!t || !t.id || TOO_BROAD.indexOf(t.id) >= 0) return true;
+    var line = (t.ancestor_ids || []).concat(t.id);
+    return FUNGAL_TAXA.some(function (id) { return line.indexOf(id) >= 0; });
   }
 
   function normalise(o) {
@@ -33,6 +46,7 @@
       sortKey: o.time_observed_at ? new Date(o.time_observed_at).getTime() : Number.MAX_SAFE_INTEGER,
       species: t.name || o.species_guess || '',
       rank: t.rank || '',
+      fungal: isFungal(o.taxon),
       commonName: t.preferred_common_name || '',
       place: o.place_guess || '',
       latitude: coords.length === 2 ? coords[0].trim() : '',

@@ -55,6 +55,10 @@ account and the iNat number is made up.
    example on GitHub Pages).
 2. Enter an iNat username and a date, then choose **Find**. You can match by
    the date observed (the default) or the date uploaded.
+   **Fungi, lichens & slime molds only** (ticked by default) hides plants,
+   animals and other life. Observations with no ID yet, or one too broad to
+   tell (such as *Life* or *Protozoa*), are still shown. Untick it to see
+   everything.
 3. All results start selected. Use **Select all**, **Deselect all**, or the
    checkboxes. Click a row to preview its label.
 4. Print using one of the methods below.

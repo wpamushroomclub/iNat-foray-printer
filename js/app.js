@@ -15,7 +15,9 @@
   };
 
   var state = {
-    observations: [],
+    all: [],          // everything found for the user and date
+    found: '',        // status line for the last search
+    observations: [], // those shown, after the fungi filter
     selected: new Set(),
     activeId: null,
     settings: Object.assign({}, DEFAULTS),
@@ -95,7 +97,9 @@
     body.textContent = '';
     if (!state.observations.length) {
       body.appendChild(el('tr', { className: 'empty' }, [
-        el('td', { colspan: '6', text: 'No observations found for that user and date.' })
+        el('td', { colspan: '6', text: state.all.length
+          ? 'None of the observations are fungi, lichens or slime molds. Untick the filter to see them.'
+          : 'No observations found for that user and date.' })
       ]));
       return;
     }
@@ -192,6 +196,26 @@
   }
 
   // ---- Search --------------------------------------------------------------
+  // Shows only fungi, lichens and slime molds when the filter is ticked.
+  // Newly shown observations start selected; hidden ones are deselected.
+  function applyFilter() {
+    var only = $('fungi-only').checked;
+    var shown = new Set(state.observations.map(function (o) { return o.id; }));
+    state.observations = state.all.filter(function (o) { return !only || o.fungal; });
+    var ids = new Set(state.observations.map(function (o) { return o.id; }));
+    state.observations.forEach(function (o) { if (!shown.has(o.id)) state.selected.add(o.id); });
+    state.selected.forEach(function (id) { if (!ids.has(id)) state.selected.delete(id); });
+    if (!ids.has(state.activeId)) state.activeId = state.observations.length ? state.observations[0].id : null;
+    renderTable();
+    renderPreview();
+    updateControls();
+    var hidden = state.all.length - state.observations.length;
+    if (state.found) {
+      status(state.found + (hidden ? ' Hiding ' + hidden + ' that ' +
+        (hidden === 1 ? 'is not a fungus, lichen or slime mold.' : 'are not fungi, lichens or slime molds.') : ''));
+    }
+  }
+
   async function find(e) {
     e.preventDefault();
     var username = $('username').value.trim().replace(/^@/, '');
@@ -208,14 +232,14 @@
         : await INat.fetchDay(username, date, field, function (got, total) {
           status('Loaded ' + got + ' of ' + total + '…');
         });
-      state.observations = obs;
-      state.selected = new Set(obs.map(function (o) { return o.id; }));
-      state.activeId = obs.length ? obs[0].id : null;
-      renderTable();
-      renderPreview();
-      status(obs.length
+      state.all = obs;
+      state.observations = [];
+      state.selected = new Set();
+      state.activeId = null;
+      state.found = obs.length
         ? 'Found ' + obs.length + ' observation' + (obs.length === 1 ? '' : 's') + ' by ' + username + ' on ' + date + '.'
-        : 'No observations by ' + username + ' ' + (field === 'created' ? 'uploaded' : 'observed') + ' on ' + date + '.');
+        : 'No observations by ' + username + ' ' + (field === 'created' ? 'uploaded' : 'observed') + ' on ' + date + '.';
+      applyFilter();
     } catch (err) {
       status('Could not load observations: ' + err.message, true);
     } finally {
@@ -352,12 +376,13 @@
       [279870080, '10:05', 'Amanita muscaria', 'species', 'Fly Agaric', 'Epping Forest, Loughton, UK'],
       [279870396, '10:31', 'Cortinarius', 'genus', 'Webcaps', 'Wake Valley Pond, Epping Forest, Essex, England, United Kingdom'],
       [279870839, '11:12', 'Hypholoma fasciculare', 'species', 'Sulphur Tuft', 'High Beach, Waltham Abbey, UK'],
-      [279871281, '', 'Agaricomycetes', 'class', 'Mushroom-forming Fungi', 'Epping Forest, UK']
+      [279871281, '', 'Agaricomycetes', 'class', 'Mushroom-forming Fungi', 'Epping Forest, UK'],
+      [279871502, '11:40', 'Quercus robur', 'species', 'English Oak', 'Epping Forest, Loughton, UK', false]
     ];
     return rows.map(function (r) {
       return {
         id: r[0], username: username, userFullName: 'Morgan Fielding', date: date, time: r[1], species: r[2],
-        rank: r[3], commonName: r[4], place: r[5], latitude: '51.6612', longitude: '0.0512',
+        rank: r[3], commonName: r[4], fungal: r[6] !== false, place: r[5], latitude: '51.6612', longitude: '0.0512',
         obscured: false, photo: '', url: 'https://www.inaturalist.org/observations/' + r[0]
       };
     });
@@ -370,8 +395,13 @@
     $('username').value = load('username') || '';
     $('date').value = today();
     $('date-field').value = load('dateField') || 'observed';
+    $('fungi-only').checked = load('fungiOnly') !== false;
 
     $('find-form').addEventListener('submit', find);
+    $('fungi-only').addEventListener('change', function () {
+      save('fungiOnly', $('fungi-only').checked);
+      applyFilter();
+    });
     $('select-all').addEventListener('click', function () {
       state.observations.forEach(function (o) { state.selected.add(o.id); });
       renderTable();

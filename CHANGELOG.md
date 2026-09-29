@@ -6,6 +6,12 @@ All notable changes to this project are recorded here. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- **Fungi, lichens & slime molds only**, ticked by default, hides plants,
+  animals and other life from the list. Observations with no ID, or one too
+  broad to tell, are still shown.
+
 ## [1.1.0] - 2026-09-29
 
 ### Changed
