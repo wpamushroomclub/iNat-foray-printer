@@ -6,6 +6,8 @@ All notable changes to this project are recorded here. The format follows
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-09-29
+
 ### Changed
 
 - The main QR code now holds just the iNat number, the same as the side
@@ -58,7 +60,8 @@ First release.
 - Demo mode (`index.html?demo=1`).
 - WPMC website styling, MIT License.
 
-[Unreleased]: https://github.com/wpamushroomclub/iNat-foray-printer/compare/v1.0.2...HEAD
+[Unreleased]: https://github.com/wpamushroomclub/iNat-foray-printer/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/wpamushroomclub/iNat-foray-printer/compare/v1.0.2...v1.1.0
 [1.0.2]: https://github.com/wpamushroomclub/iNat-foray-printer/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/wpamushroomclub/iNat-foray-printer/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/wpamushroomclub/iNat-foray-printer/releases/tag/v1.0.0
