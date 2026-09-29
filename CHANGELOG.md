@@ -6,6 +6,16 @@ All notable changes to this project are recorded here. The format follows
 
 ## [Unreleased]
 
+### Changed
+
+- The main QR code now holds just the iNat number, the same as the side
+  strip's Data Matrix code, instead of the number, a Tab and the username.
+  The CSV export's `qr_code` column matches.
+
+### Removed
+
+- The **QR code: username before iNat #** setting, which no longer applies.
+
 ## [1.0.2] - 2026-09-27
 
 ### Fixed

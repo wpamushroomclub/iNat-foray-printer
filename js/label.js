@@ -111,11 +111,9 @@
     ctx.putImageData(img, 0, 0);
   }
 
-  // What the main QR code types when scanned: two fields separated by a Tab.
-  function qrPayload(obs, opts) {
-    return opts && opts.qrUsernameFirst
-      ? obs.username + '\t' + obs.id
-      : obs.id + '\t' + obs.username;
+  // What the main QR code types when scanned: just the iNat number.
+  function qrPayload(obs) {
+    return String(obs.id);
   }
 
   function dateTime(obs) {
@@ -125,7 +123,7 @@
   /**
    * Renders a label for one observation.
    * obs:  {id, username, date, time, species, rank, place}
-   * opts: {widthMm, heightMm, rotation, qrUsernameFirst, shiftMm}
+   * opts: {widthMm, heightMm, rotation, shiftMm}
    *       (rotation: degrees counter-clockwise; shiftMm: moves everything
    *       left, towards the QR code, before rotating)
    * Returns a canvas of widthMm*8 x heightMm*8 dots (swapped at 90/270).
@@ -160,7 +158,7 @@
     var place = obs.place || '';
 
     // --- Main panel -------------------------------------------------------
-    var qrSize = drawQr(ctx, qrPayload(obs, opts), pad, pad, Math.round(H * 0.42));
+    var qrSize = drawQr(ctx, qrPayload(obs), pad, pad, Math.round(H * 0.42));
 
     var tx = pad + qrSize + Math.round(14 * k);
     var tw = mainRight - tx;

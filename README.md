@@ -29,8 +29,7 @@ account and the iNat number is made up.
 
 ![Example 60 × 40 mm label: QR code, iNat number 279870013, username foray_demo, name Morgan Fielding, date and time, species and location, with a cut-off side strip](docs/label-example.png)
 
-* **The QR code** holds `<iNat #><TAB><username>`, for example
-  `279870013⇥foray_demo`.
+* **The QR code** holds just the iNat number, for example `279870013`.
 * **The side strip is cut off along the divider line and kept with the
   physical voucher.** It stands alone: a Data Matrix code of just the iNat
   number with the number printed beside it, then the date and time, then the
@@ -46,13 +45,9 @@ account and the iNat number is made up.
 * The date and time are the observation's local time.
 * The location is iNaturalist's place name (`place_guess`), wrapped and sized
   to fit.
-* When scanned, the QR code types the number, a Tab, then the username. A
-  scanner used as a keyboard therefore fills two spreadsheet cells. Tick
-  **QR code: username before iNat #** in *Label & printer settings* to swap
-  the order; the CSV export's `qr_code` column follows the same setting.
-  Zebra scanners (for example the DS9308) send Tab as Ctrl+I by default, so
-  both land in one cell: scan **Enable Function Key Mapping** from the
-  scanner's Product Reference Guide (USB Host Parameters) to fix this.
+* When scanned, both codes type just the iNat number, so a scanner used as a
+  keyboard fills one spreadsheet cell. The CSV export's `qr_code` column holds
+  the same number.
 
 ## Using it
 
